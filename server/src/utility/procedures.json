@@ -1,0 +1,34 @@
+{
+    "usp_User_Insert" : [
+        {"propColumn":"FirstName",     "type": "string",  "modelProperty":"firstName"},
+        {"propColumn":"LastName",      "type": "string",  "modelProperty":"lastName"},
+        {"propColumn":"Email",         "type": "string",  "modelProperty":"email"},
+        {"propColumn":"RoleId",        "type": "number",  "modelProperty":"role.id"},
+        {"propColumn":"UserTypeId",    "type": "number",  "modelProperty":"userType.id"},
+        {"propColumn":"Gender",        "type": "string",  "modelProperty":"gender"},
+        {"propColumn":"LoginId",       "type": "string",  "modelProperty":"loginId"}, 
+        {"propColumn":"LoginPassword", "type": "string",  "modelProperty":"loginPassword"} 
+    ],
+    "usp_User_SelectByLoginIdPassword": [
+        {"propColumn":"LoginId",       "type": "string",  "modelProperty":"loginId"}, 
+        {"propColumn":"LoginPassword", "type": "string",  "modelProperty":"loginPassword"}
+    
+    ],
+    "usp_User_Delete": [
+        {"propColumn":"Id", "type": "number",  "modelProperty":"id"}
+    ],
+    "usp_User_Update": [
+        {"propColumn":"Id",         "type": "number",  "modelProperty":"id"},
+        {"propColumn":"Email",      "type": "string",  "modelProperty":"email"},
+        {"propColumn":"RoleId",     "type": "number",  "modelProperty":"role.id"},
+        {"propColumn":"UserTypeId", "type": "number",  "modelProperty":"userType.id"},
+        {"propColumn":"LoginId",       "type": "string",  "modelProperty":"loginId"}
+        ],
+    "usp_User_SelectAll":[],
+    "usp_User_SelectById": [
+        {"propColumn":"Id",         "type": "number",  "modelProperty":"id"}
+    ],
+    "usp_User_SelectByAnyColumn":[
+        
+    ]
+}

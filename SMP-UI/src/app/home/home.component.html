@@ -1,2 +1,110 @@
-<p>home works!</p>
-<div>Weldone</div>
+<div style="width: 100%;">
+
+
+    <div style="margin-top: 20px;
+    float: left;
+    width: 40%;
+    position: relative;
+    border: solid 1px #eee;
+    margin-right: 20px;
+    background: rgba(238, 238, 238, 0.38);
+    box-shadow: 0px 3px 7px #c1baba;">
+        <div style="font-size: 20px;
+        color: #000;
+        font-weight: bold;
+        background: #87ceeb;
+        padding: 5px;"> Stocks with high COI </div>
+
+        <div style="padding: 15px;">
+            <div>
+                <div style="display:inline-flex">
+                    <label for="priceRange">Stock Price</label> &nbsp;&nbsp;
+                    <select [(ngModel)]="selectedPriceRange.idx" (change)="OnPriceRangeChange($event.target)"
+                        #priceRange>
+                        <option *ngFor="let priceRange of priceRanges" [value]="priceRange.idx">{{priceRange.price}}
+                        </option>
+                    </select> &nbsp;&nbsp;
+                    <label for="coiRange">COI Change</label> &nbsp;&nbsp;
+                    <select [(ngModel)]="selectedCOIRange.idx" (change)="OnCOIRangeChange($event.target)" #coiRange>
+                        <option *ngFor="let coiRange of coiRanges" [value]="coiRange.idx">{{coiRange.coi}}</option>
+                    </select> &nbsp;&nbsp;
+                    <input type="button" [value]="this.startTracking?'Start Tracking':'Stop Tracking'"
+                        (click)="OnTrackScriptButtonClick()" /> &nbsp;&nbsp;
+
+                </div>
+            </div><br>
+
+            <div>
+                <table
+                    [ngStyle]="{ 'padding':0, 'border': 'solid 1px ', 'border-collapse':'collapse', 'height':'65vh', 'overflow-y':'auto', 'display':'inline-block' }">
+                    <tr>
+                        <th [ngStyle]="{'border':'solid 1px', 'text-align':'left', 'width':'27%'}"> Script Name</th>
+                        <th [ngStyle]="{'border':'solid 1px','text-align':'left', 'width':'27%'}">COI</th>
+                    </tr>
+                    <tr *ngFor="let item of selectedStock$ |async; let i = index"
+                        [ngStyle]="{'background-color': i%2===0 ? 'skyblue' : 'white' }">
+                        <td [ngStyle]="{'border':'solid 1px', 'padding': '0 5px'}"><span>{{item.name}}</span></td>
+                        <td [ngStyle]="{'border':'solid 1px', 'padding':'0 5px'}"><span>{{item.coi}}</span></td>
+                    </tr>
+                </table>
+                <img #progressBar src="./assets/progress.gif" width="50px"
+                    style=" display: none; position: absolute; top: 65px; right: 20px;" />
+            </div>
+        </div>
+    </div>
+
+
+
+    <div style="margin-top: 22px; float:left; width:58.3%;background: rgba(238, 238, 238, 0.38);
+    box-shadow: 0px 3px 7px #c1baba;">
+        <div style="font-size: 20px;
+        color: #000;
+        font-weight: bold;
+        background: #87ceeb;
+        padding: 5px;">Stock With Gap Up/Down Opening</div>
+        <div style="padding: 5px;"></div>
+        <div>
+            <div style="display: inline-flex; margin-left: 10px;">
+                <label for="previousDayBhavCopy" style="display:inline-block;">Bhavcopy</label>&nbsp;&nbsp;
+                <input type="file" (change)="OnBhavcopyBrowseSelect($event.target)" #previousDayBhavCopy>&nbsp;&nbsp;
+                <label for="preOpenMarketData" style="display:inline-block;">PreOpenData</label>&nbsp;&nbsp;
+                <input type="file" (change)="OnPreOpenMarketDataFileSelect($event.target)" #preOpenMarketData>
+                <input type="button" value="Search" (click)="OnSearchButtonClick()">
+            </div>
+        </div><br>
+        <div>
+
+            <fieldset>
+                <legend style="font-size: 18px;
+                color: #000;
+                font-weight: bold;
+                background: #87ceeb;
+                padding: 0 15px;">Stocks with gap up opening</legend>
+                <div>
+                    <ol>
+                        <li *ngFor="let item of stocksWithGapUpOpening$ |async; let i = index"
+                            style="float: left; width:30%;"><span>{{item}}</span></li>
+                    </ol>
+
+                </div>
+            </fieldset><br>
+
+            <fieldset>
+                <legend style="font-size: 18px;
+                color: #000;
+                font-weight: bold;
+                background: #87ceeb;
+                padding: 0 15px;">Stocks with gap down opening</legend>
+                <div>
+                    <ol>
+                        <li *ngFor="let item of stocksWithGapDownOpening$ |async; let i = index"
+                            style="float: left; width:30%;"><span>{{item}}</span></li>
+                    </ol>
+                </div>
+            </fieldset>
+
+        </div>
+    </div>
+</div>
+
+<div style="clear: both;"></div>

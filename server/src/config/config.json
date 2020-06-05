@@ -1,0 +1,16 @@
+{
+    "development" : {
+        "port": 3000,
+        "encryptionDecryptionKey" : "myencryptionkey",
+        "tokenKey" : "mytokenkey",
+        "tokenExpirationTime" : "20m",
+        "dbLoginUser" : "smfmappuser",
+        "dbLoginPassword": "smfm@12345",
+        "dbServer" : "DEEKSHA-PC",
+        "dbName" : "SocietyMaintenanceFundManagement",
+        "dbInstanceName" : "MSSQLSERVER"
+    },
+    "production" : {
+        "port": 5000
+    }
+}
