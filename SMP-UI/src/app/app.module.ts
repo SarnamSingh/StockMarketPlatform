@@ -6,11 +6,16 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
 import {HomeComponent} from './home/home.component';
+import { BhavcopyComponent } from './bhavcopy/bhavopy.component';
+import { BhavcopyService } from './bhavcopy/bhavcopy.service';
+
+
 
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent
+    HomeComponent,
+    BhavcopyComponent
   ],
   imports: [
     BrowserModule,
@@ -18,7 +23,7 @@ import {HomeComponent} from './home/home.component';
     FormsModule,
     HttpClientModule
   ],
-  providers: [],
+  providers: [BhavcopyService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

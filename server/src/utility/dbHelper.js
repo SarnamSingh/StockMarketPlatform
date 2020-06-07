@@ -3,7 +3,6 @@ const tdsConnection = tedious.Connection;
 const tdsTypes = tedious.TYPES;
 const tdsRequest = tedious.Request;
 const procedureMapping = require('./procedureMapping');
-
 const dbConnectionConfiguration = {
     server: global.gEnvConfig.dbServer,
     authentication: {
@@ -20,7 +19,7 @@ const output = [];
 const sqlConnection = new tdsConnection(dbConnectionConfiguration);
 sqlConnection.on('connect', (err) => {
     if (err) {
-        console.log(`Error occurred while connection to server :${err}`);
+        console.log(`Error occurred while connecting to server :${err}`);
     }
     else {
         console.log('SQL connecton established successfully.');
@@ -38,9 +37,14 @@ const executeQuery = (inputObject, query, callback) => {
         }
 
     });
+
     procedureMapping.get(query).forEach(element => {
+        console.log(element.propColumn);
+        console.log(getTediousType(element.type));
+        console.log(getModelProperty(element.modelProperty, inputObject));
         sqlRequest.addParameter(element.propColumn, getTediousType(element.type), getModelProperty(element.modelProperty, inputObject))
     });
+
     sqlRequest.on('row', (columns) => {
         if (columns) {
             const currentRow = new Object();
@@ -50,6 +54,7 @@ const executeQuery = (inputObject, query, callback) => {
             output.push(currentRow);
         }
     });
+
     sqlConnection.callProcedure(sqlRequest);
 };
 
@@ -57,10 +62,16 @@ const getTediousType = (inputType) => {
     switch (inputType.toLowerCase()) {
         case "string":
             return tdsTypes.VarChar
-            break;
+        case "char":
+            return tdsTypes.Char
         case "number":
             return tdsTypes.Int
-            break;
+        case "numeric":
+            return tdsTypes.Numeric
+        case "decimal":
+            return tdsTypes.Decimal
+        case "date":
+            return tdsTypes.Date
         case "datetime":
             return tdsTypes.DateTime
         case "boolean":
@@ -79,14 +90,14 @@ const getModelProperty = (prop, inputObject) => {
         return inputObject;
     }
     else {
-     let value = null;
-        if (typeof inputObject[prop] === 'string' && inputObject[prop].length > 0){
+        let value = null;
+        if (typeof inputObject[prop] === 'string' && inputObject[prop].length > 0) {
             value = inputObject[prop];
         }
-        if (typeof inputObject[prop] === 'number' && inputObject[prop] !== 0){
+        if (typeof inputObject[prop] === 'number' && inputObject[prop] !== 0) {
             value = inputObject[prop];
         }
-        if (typeof inputObject[prop] === 'boolean'){
+        if (typeof inputObject[prop] === 'boolean') {
             value = inputObject[prop];
         }
         return value;

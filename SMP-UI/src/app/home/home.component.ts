@@ -34,8 +34,8 @@ export class HomeComponent {
   csvContent: string;
   bhavcopyArray: BhavcopyModel[] = [];
   preOpenMarketDataArray: PreOpenMarketDataModel[] = [];
-  stocksWithGapUpOpening: string[] = [];
-  stocksWithGapDownOpening: string[] = [];
+  stocksWithGapUpOpening = [];
+  stocksWithGapDownOpening = [];
   stocksWithGapUpOpening$ = new Subject<string[]>();
   stocksWithGapDownOpening$ = new Subject<string[]>();
 
@@ -156,9 +156,9 @@ export class HomeComponent {
         csvRecord.prevClose = +currentRecord[7].trim();
         csvRecord.totTrdQty = +currentRecord[8].trim();
         csvRecord.totTrdVal = +currentRecord[9].trim();
-        csvRecord.timeStamp = new Date(currentRecord[10].trim());
+        csvRecord.tradedOn = new Date(currentRecord[10].trim());
         csvRecord.totalTrades = +currentRecord[11].trim();
-        csvRecord.isin = currentRecord[12].trim();
+        csvRecord.ISIN = currentRecord[12].trim();
         csvArr.push(csvRecord);
 
       }
@@ -241,14 +241,46 @@ export class HomeComponent {
     this.preOpenMarketDataArray.forEach(preOpenStock => {
       let bhavcopyData = this.bhavcopyArray.find(bhavcopy => bhavcopy.symbol === preOpenStock.symbol && bhavcopy.series.toLowerCase() === "eq");
       if (bhavcopyData && preOpenStock.iepPrice >= bhavcopyData.high) {
-        this.stocksWithGapUpOpening.push(preOpenStock.symbol);
+        const pp = (bhavcopyData.high + bhavcopyData.low + bhavcopyData.last) / 3;
+        const r1 = 2 * pp - bhavcopyData.low;
+        const r2 = pp + (bhavcopyData.high - bhavcopyData.low);
+        this.stocksWithGapUpOpening.push({
+          'symbol': preOpenStock.symbol,
+          'r2': preOpenStock.iepPrice >= r2 - 0.5 ? 'Yes' : '-',
+          'r1': preOpenStock.iepPrice >= r1 - 0.5 ? 'Yes' : '-',
+          'pp': preOpenStock.iepPrice >= pp - 0.5 ? 'Yes' : '-'
+        }
+        );
         this.stocksWithGapUpOpening$.next(this.stocksWithGapUpOpening);
       }
       if (bhavcopyData && preOpenStock.iepPrice <= bhavcopyData.low) {
-        this.stocksWithGapDownOpening.push(preOpenStock.symbol);
+        const pp = (bhavcopyData.high + bhavcopyData.low + bhavcopyData.last) / 3;
+        const s1 = 2 * pp - bhavcopyData.high;
+        const s2 = pp - (bhavcopyData.high - bhavcopyData.low);
+        this.stocksWithGapDownOpening.push({
+          'symbol': preOpenStock.symbol,
+          's2': preOpenStock.iepPrice <= s2 + 0.5 ? 'Yes' : '-',
+          's1': preOpenStock.iepPrice <= s1 + 0.5 ? 'Yes' : '-',
+          'pp': preOpenStock.iepPrice >= pp + 0.5 ? 'Yes' : '-'
+        });
         this.stocksWithGapDownOpening$.next(this.stocksWithGapDownOpening);
       }
     });
+  }
+
+  public getRowColor(currentRow):string{
+    let color: string = "white";
+    if (currentRow.r2 == 'Yes' || currentRow.s2 == 'Yes') {
+      return color = "green";
+    }
+    if (currentRow.r1 == 'Yes' || currentRow.s1 == 'Yes') {
+      return color = "skyblue";
+    }
+    if (currentRow.pp == 'Yes' || currentRow.pp == 'Yes') {
+      return color = "indianred";
+    }
+    return color;
+    
   }
 
 }

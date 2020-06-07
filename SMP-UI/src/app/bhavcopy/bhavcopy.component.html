@@ -1,0 +1,29 @@
+<div style="text-align: center;">
+    <div style="font-size: 20px;
+    color: #000;
+    font-weight: bold;
+    background: #87ceeb;
+    padding: 5px;">Upload Bhavcopy Data</div>
+    <div style="margin: 20px; ">
+        <div style="margin-top: 20px;">
+            <label for="bhavcopyType" style="width: 200px; display: inline-block;">Bhavcopy Type</label>
+            <select [(ngModel)]="selectedBhavcopy.value" (change)="OnBhavcopyChange($event.target)"
+                style="width: 200px;">
+                <option *ngFor="let bhavcopy of bhavcopyTypes" [value]="bhavcopy.value">{{bhavcopy.displayText}}
+                </option>
+            </select>
+        </div>
+        <div style="margin-top: 20px;">
+            <label for="bhavcopy" style="width: 200px;display: inline-block;">Bhavcopy </label>
+            <input type="file" style="width: 200px;" (change)="OnBhavcopyBrowseSelect($event.target)">
+        </div>
+        <div style="margin-top: 20px;">
+            <label for="bhavcopy" style="width: 200px;display: inline-block;"> </label>
+            <input type="button" value="Upload Bhavcopy"   (click)="OnBhavcopyUploadClick()"> &nbsp;&nbsp;&nbsp;
+            <img #progressBar src="./assets/progress.gif" width="50px"  style="position:relative; display: none; vertical-align: middle;"/>
+        </div>
+    </div>
+    <div>
+
+    </div>
+</div>

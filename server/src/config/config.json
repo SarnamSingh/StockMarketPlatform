@@ -4,10 +4,10 @@
         "encryptionDecryptionKey" : "myencryptionkey",
         "tokenKey" : "mytokenkey",
         "tokenExpirationTime" : "20m",
-        "dbLoginUser" : "smfmappuser",
-        "dbLoginPassword": "smfm@12345",
-        "dbServer" : "DEEKSHA-PC",
-        "dbName" : "SocietyMaintenanceFundManagement",
+        "dbLoginUser" : "smpappuser",
+        "dbLoginPassword": "smp!@#$%",
+        "dbServer" : "BHAVNAWKS083",
+        "dbName" : "smpdb",
         "dbInstanceName" : "MSSQLSERVER"
     },
     "production" : {

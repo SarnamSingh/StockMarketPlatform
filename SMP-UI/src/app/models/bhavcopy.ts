@@ -9,9 +9,9 @@ export class BhavcopyModel {
     prevClose: number
     totTrdQty: number
     totTrdVal: number
-    timeStamp: Date
+    tradedOn: Date
     totalTrades: number
-    isin: string
+    ISIN: string
 
 
 }
