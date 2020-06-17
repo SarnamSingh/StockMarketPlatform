@@ -149,7 +149,7 @@
         },
         {
             "propColumn": "TradedOn",
-            "type": "date",
+            "type": "string",
             "modelProperty": "tradedOn"
         },
         {
@@ -161,6 +161,83 @@
             "propColumn": "ISIN",
             "type": "string",
             "modelProperty": "ISIN"
+        }
+    ],
+    "FNOBhavcopy_Insert":[
+        {
+            "propColumn": "Instrument",
+            "type": "string",
+            "modelProperty": "instrument"
+        },
+        {
+            "propColumn": "Symbol",
+            "type": "string",
+            "modelProperty": "symbol"
+        },
+        {
+            "propColumn": "ExpiryDate",
+            "type": "string",
+            "modelProperty": "expiryDate"
+        },
+        {
+            "propColumn": "StrikePrice",
+            "type": "decimal",
+            "modelProperty": "strikePrice"
+        },
+        {
+            "propColumn": "OptionType",
+            "type": "string",
+            "modelProperty": "optionType"
+        },
+        {
+            "propColumn": "Open",
+            "type": "decimal",
+            "modelProperty": "open"
+        },
+        {
+            "propColumn": "High",
+            "type": "decimal",
+            "modelProperty": "high"
+        },
+        {
+            "propColumn": "Low",
+            "type": "decimal",
+            "modelProperty": "low"
+        },
+        {
+            "propColumn": "Close",
+            "type": "decimal",
+            "modelProperty": "close"
+        },
+        {
+            "propColumn": "SettlePrice",
+            "type": "decimal",
+            "modelProperty": "settlePrice"
+        },
+        {
+            "propColumn": "Contracts",
+            "type": "decimal",
+            "modelProperty": "contracts"
+        },
+        {
+            "propColumn": "ValueInLakh",
+            "type": "decimal",
+            "modelProperty": "valueInLakh"
+        },
+        {
+            "propColumn": "OpenInterest",
+            "type": "decimal",
+            "modelProperty": "openInterest"
+        },
+        {
+            "propColumn": "ChangeInOpenInterest",
+            "type": "decimal",
+            "modelProperty": "changeInOpenInterest"
+        },
+        {
+            "propColumn": "TradedOn",
+            "type": "string",
+            "modelProperty": "tradedOn"
         }
     ]
 }

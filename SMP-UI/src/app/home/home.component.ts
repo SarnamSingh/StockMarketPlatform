@@ -4,7 +4,7 @@ import { HomeService } from './home.service'
 import { environment } from '../../environments/environment';
 import { Observable, Subject, Subscription, timer, interval } from 'rxjs';
 import { script } from '../models/scriptModel';
-import { BhavcopyModel } from '../models/bhavcopy';
+import { EquityBhavcopyModel } from '../models/equityBhavcopy';
 import { PreOpenMarketDataModel } from '../models/preOpenMarketData';
 
 @Component({
@@ -19,6 +19,7 @@ export class HomeComponent {
   trackingStatus = '';
   startTracking = true;
   selectedStock$ = new Subject<script[]>();
+  displayStocksWithHighCOI = false;
   scriptArray: Array<script> = [];
   currentProgress = 0;
   minimumCOIChange = 0;
@@ -32,23 +33,25 @@ export class HomeComponent {
   selectedCOIRange = { idx: 3, coi: '> 200000' };
 
   csvContent: string;
-  bhavcopyArray: BhavcopyModel[] = [];
+  bhavcopyArray: EquityBhavcopyModel[] = [];
   preOpenMarketDataArray: PreOpenMarketDataModel[] = [];
   stocksWithGapUpOpening = [];
   stocksWithGapDownOpening = [];
   stocksWithGapUpOpening$ = new Subject<string[]>();
   stocksWithGapDownOpening$ = new Subject<string[]>();
+  displayStocksWithGapUpOpening = false;
+  displayStocksWithGapDownOpening = false;
 
   @ViewChild('progressBar')
   private progressBar: ElementRef;
-
+  
 
   private subscription: Subscription;
 
   definedInterval: Observable<number> = interval(300000);
 
   constructor(private homeService: HomeService, private httpClient: HttpClient) {
-
+    
   }
 
   OnPriceRangeChange(selectedPriceRangeOption) {
@@ -58,9 +61,7 @@ export class HomeComponent {
   OnCOIRangeChange(selectedCOIRangeOption) {
     this.selectedCOIRange = this.coiRanges.find(item => item.idx == selectedCOIRangeOption.value);
   }
-  test() {
-    console.log(new Date());
-  }
+  
   getContentFromAnotherPortal() {
     this.currentProgress = 0;
     //this.progressBar.nativeElement.style.display = "block";
@@ -87,6 +88,7 @@ export class HomeComponent {
                 if (+callCOI > this.minimumCOIChange || +putCOI > this.minimumCOIChange) {
                   this.scriptArray.push({ "name": item, "coi": +callCOI > +putCOI ? +callCOI : +putCOI })
                   this.selectedStock$.next(this.scriptArray);
+                  this.displayStocksWithHighCOI = true;
                   break;
                 }
               }
@@ -145,7 +147,7 @@ export class HomeComponent {
     for (let i = 1; i < csvRecordsArray.length; i++) {
       let currentRecord = (<string>csvRecordsArray[i]).split(',');
       if (currentRecord.length == headerLength) {
-        let csvRecord: BhavcopyModel = new BhavcopyModel();
+        let csvRecord: EquityBhavcopyModel = new EquityBhavcopyModel();
         csvRecord.symbol = currentRecord[0].trim();
         csvRecord.series = currentRecord[1].trim();
         csvRecord.open = +currentRecord[2].trim();
@@ -156,7 +158,7 @@ export class HomeComponent {
         csvRecord.prevClose = +currentRecord[7].trim();
         csvRecord.totTrdQty = +currentRecord[8].trim();
         csvRecord.totTrdVal = +currentRecord[9].trim();
-        csvRecord.tradedOn = new Date(currentRecord[10].trim());
+        csvRecord.tradedOn = currentRecord[10].trim();
         csvRecord.totalTrades = +currentRecord[11].trim();
         csvRecord.ISIN = currentRecord[12].trim();
         csvArr.push(csvRecord);
@@ -222,6 +224,7 @@ export class HomeComponent {
     return csvArr;
   }
   OnTrackScriptButtonClick() {
+    this.displayStocksWithHighCOI = false;
     this.minimumPrice = + (this.selectedPriceRange.idx == 0 ? '0' : (this.selectedPriceRange.price.split(' '))[1]);
     this.minimumCOIChange = + (this.selectedCOIRange.coi.split(' '))[1];
     if (this.startTracking) {
@@ -230,6 +233,7 @@ export class HomeComponent {
         this.getContentFromAnotherPortal();
       })
     } else {
+      this.displayStocksWithHighCOI = false;
       this.subscription.unsubscribe();
     }
     this.startTracking = !this.startTracking;
@@ -238,6 +242,8 @@ export class HomeComponent {
   OnSearchButtonClick() {
     this.stocksWithGapUpOpening.length = 0;
     this.stocksWithGapDownOpening.length = 0;
+    this.displayStocksWithGapUpOpening = false;
+    this.displayStocksWithGapDownOpening = false;
     this.preOpenMarketDataArray.forEach(preOpenStock => {
       let bhavcopyData = this.bhavcopyArray.find(bhavcopy => bhavcopy.symbol === preOpenStock.symbol && bhavcopy.series.toLowerCase() === "eq");
       if (bhavcopyData && preOpenStock.iepPrice >= bhavcopyData.high) {
@@ -246,12 +252,16 @@ export class HomeComponent {
         const r2 = pp + (bhavcopyData.high - bhavcopyData.low);
         this.stocksWithGapUpOpening.push({
           'symbol': preOpenStock.symbol,
-          'r2': preOpenStock.iepPrice >= r2 - 0.5 ? 'Yes' : '-',
-          'r1': preOpenStock.iepPrice >= r1 - 0.5 ? 'Yes' : '-',
-          'pp': preOpenStock.iepPrice >= pp - 0.5 ? 'Yes' : '-'
-        }
-        );
+          'isEqualOrAboverR2': preOpenStock.iepPrice >= r2  ? true: false,
+          'isEqualOrAboverR1': preOpenStock.iepPrice >= r1  ? true: false,
+          'isEqualOrAboverPP': preOpenStock.iepPrice >= pp  ? true: false,
+          'r2': r2,
+          'r1': r1,
+          'pp': pp,
+          'open': preOpenStock.iepPrice
+        });
         this.stocksWithGapUpOpening$.next(this.stocksWithGapUpOpening);
+        this.displayStocksWithGapUpOpening = true;
       }
       if (bhavcopyData && preOpenStock.iepPrice <= bhavcopyData.low) {
         const pp = (bhavcopyData.high + bhavcopyData.low + bhavcopyData.last) / 3;
@@ -259,10 +269,15 @@ export class HomeComponent {
         const s2 = pp - (bhavcopyData.high - bhavcopyData.low);
         this.stocksWithGapDownOpening.push({
           'symbol': preOpenStock.symbol,
-          's2': preOpenStock.iepPrice <= s2 + 0.5 ? 'Yes' : '-',
-          's1': preOpenStock.iepPrice <= s1 + 0.5 ? 'Yes' : '-',
-          'pp': preOpenStock.iepPrice >= pp + 0.5 ? 'Yes' : '-'
+          'isEqualOrBelowS2': preOpenStock.iepPrice <= s2 ? true: false,
+          'isEqualOrBelowS1': preOpenStock.iepPrice <= s1 ? true: false,
+          'isEqualOrBelowPP': preOpenStock.iepPrice <= pp ? true: false,
+          's2': s2,
+          's1': s1,
+          'pp': pp,
+          'open': preOpenStock.iepPrice
         });
+        this.displayStocksWithGapDownOpening = true;
         this.stocksWithGapDownOpening$.next(this.stocksWithGapDownOpening);
       }
     });
@@ -270,13 +285,13 @@ export class HomeComponent {
 
   public getRowColor(currentRow):string{
     let color: string = "white";
-    if (currentRow.r2 == 'Yes' || currentRow.s2 == 'Yes') {
+    if (currentRow.isEqualOrAboverR2 || currentRow.isEqualOrBelowS2 ) {
       return color = "green";
     }
-    if (currentRow.r1 == 'Yes' || currentRow.s1 == 'Yes') {
+    if (currentRow.isEqualOrAboverR1 || currentRow.isEqualOrBelowS1 ) {
       return color = "skyblue";
     }
-    if (currentRow.pp == 'Yes' || currentRow.pp == 'Yes') {
+    if (currentRow.isEqualOrAboverPP || currentRow.isEqualOrBelowPP ) {
       return color = "indianred";
     }
     return color;

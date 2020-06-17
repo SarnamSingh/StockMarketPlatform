@@ -21,9 +21,6 @@ sqlConnection.on('connect', (err) => {
     if (err) {
         console.log(`Error occurred while connecting to server :${err}`);
     }
-    else {
-        console.log('SQL connecton established successfully.');
-    }
 });
 
 const executeQuery = (inputObject, query, callback) => {
@@ -39,9 +36,6 @@ const executeQuery = (inputObject, query, callback) => {
     });
 
     procedureMapping.get(query).forEach(element => {
-        console.log(element.propColumn);
-        console.log(getTediousType(element.type));
-        console.log(getModelProperty(element.modelProperty, inputObject));
         sqlRequest.addParameter(element.propColumn, getTediousType(element.type), getModelProperty(element.modelProperty, inputObject))
     });
 

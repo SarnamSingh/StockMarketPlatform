@@ -6,7 +6,7 @@
         "tokenExpirationTime" : "20m",
         "dbLoginUser" : "smpappuser",
         "dbLoginPassword": "smp!@#$%",
-        "dbServer" : "BHAVNAWKS083",
+        "dbServer" : "BHAVNAWKS301",
         "dbName" : "smpdb",
         "dbInstanceName" : "MSSQLSERVER"
     },

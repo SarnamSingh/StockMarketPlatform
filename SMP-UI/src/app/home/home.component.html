@@ -3,7 +3,7 @@
 
     <div style="margin-top: 20px;
     float: left;
-    width: 40%;
+    width: 28.5%;
     position: relative;
     border: solid 1px #eee;
     margin-right: 20px;
@@ -34,7 +34,7 @@
                 </div>
             </div><br>
 
-            <div>
+            <div  [style]="displayStocksWithHighCOI?'display:block':'display:none'"> 
                 <table
                     [ngStyle]="{ 'padding':0, 'border': 'solid 1px ', 'border-collapse':'collapse', 'height':'65vh', 'overflow-y':'auto', 'display':'inline-block' }">
                     <tr>
@@ -55,13 +55,13 @@
 
 
 
-    <div style="margin-top: 22px; float:left; width:58.3%;background: rgba(238, 238, 238, 0.38);
+    <div style="margin-top: 22px; float:left; width:69%;background: rgba(238, 238, 238, 0.38);
     box-shadow: 0px 3px 7px #c1baba;">
         <div style="font-size: 20px;
         color: #000;
         font-weight: bold;
         background: #87ceeb;
-        padding: 5px;">Stock With Gap Up/Down Opening</div>
+        padding: 5px;">Stocks With Gap Up/Down Opening</div>
         <div style="padding: 5px;"></div>
         <div>
             <div style="display: inline-flex; margin-left: 10px;">
@@ -80,21 +80,25 @@
                 font-weight: bold;
                 background: #87ceeb;
                 padding: 0 15px;">Stocks with gap up opening</legend>
-                <div>
+  
+  
+  <div [style]="displayStocksWithGapUpOpening?'display:block':'display:none'">
                     <table
                         [ngStyle]="{ 'padding':0, 'border': 'solid 1px ', 'border-collapse':'collapse', 'height':'65vh', 'overflow-y':'auto', 'display':'inline-block','width':'100%' }">
                         <tr>
-                            <th [ngStyle]="{'border':'solid 1px', 'text-align':'left', 'width':'50%' }"> Symbol</th>
-                            <th [ngStyle]="{'border':'solid 1px','text-align':'left', 'width':'15%' }">R2</th>
-                            <th [ngStyle]="{'border':'solid 1px','text-align':'left', 'width':'15%'}">R1</th>
-                            <th [ngStyle]="{'border':'solid 1px','text-align':'left', 'width':'15%'}">PP</th>
+                            <th [ngStyle]="{'border':'solid 1px', 'text-align':'left'}"> Symbol</th>
+                            <th [ngStyle]="{'border':'solid 1px','text-align':'left' }">Open</th>
+                            <th [ngStyle]="{'border':'solid 1px','text-align':'left' }">R2</th>
+                            <th [ngStyle]="{'border':'solid 1px','text-align':'left' }">R1</th>
+                            <th [ngStyle]="{'border':'solid 1px','text-align':'left' }">PP</th>
                         </tr>
                         <tr *ngFor="let item of stocksWithGapUpOpening$ |async; let i = index">
                       
                             <td [ngStyle]="{'border':'solid 1px', 'padding': '0 5px'}" [style.background-color]="getRowColor(item)"><span>{{item.symbol}}</span></td>
-                            <td [ngStyle]="{'border':'solid 1px', 'padding':'0 5px'}"><span>{{item.r2}}</span></td>
-                            <td [ngStyle]="{'border':'solid 1px', 'padding':'0 5px'}"><span>{{item.r1}}</span></td>
-                            <td [ngStyle]="{'border':'solid 1px', 'padding':'0 5px'}"><span>{{item.pp}}</span></td>
+                            <td [ngStyle]="{'border':'solid 1px', 'padding':'0 5px'}"><span>{{item.open | number : '1.2-2'}}</span></td>
+                            <td [ngStyle]="{'border':'solid 1px', 'padding':'0 5px'}"><span>{{item.r2 | number : '1.2-2'}}</span></td>
+                            <td [ngStyle]="{'border':'solid 1px', 'padding':'0 5px'}"><span>{{item.r1 | number : '1.2-2'}}</span></td>
+                            <td [ngStyle]="{'border':'solid 1px', 'padding':'0 5px'}"><span>{{item.pp | number : '1.2-2'}}</span></td>
                         </tr>
                     </table>
                 </div>
@@ -106,20 +110,22 @@
                 font-weight: bold;
                 background: #87ceeb;
                 padding: 0 15px;">Stocks with gap down opening</legend>
-                <div>
+                <div [style]="displayStocksWithGapDownOpening?'display:block':'display:none'">
                     <table
                         [ngStyle]="{ 'padding':0, 'border': 'solid 1px ', 'border-collapse':'collapse', 'height':'65vh', 'overflow-y':'auto', 'display':'inline-block','width':'100%' }">
                         <tr>
-                            <th [ngStyle]="{'border':'solid 1px', 'text-align':'left', 'width':'50%' }"> Symbol</th>
-                            <th [ngStyle]="{'border':'solid 1px','text-align':'left', 'width':'15%'}">R2</th>
-                            <th [ngStyle]="{'border':'solid 1px','text-align':'left', 'width':'15%'}">R1</th>
-                            <th [ngStyle]="{'border':'solid 1px','text-align':'left', 'width':'15%'}">PP</th>
+                            <th [ngStyle]="{'border':'solid 1px', 'text-align':'left'}"> Symbol</th>
+                            <th [ngStyle]="{'border':'solid 1px','text-align':'left' }">Open</th>
+                            <th [ngStyle]="{'border':'solid 1px','text-align':'left' }">S2</th>
+                            <th [ngStyle]="{'border':'solid 1px','text-align':'left' }">S1</th>
+                            <th [ngStyle]="{'border':'solid 1px','text-align':'left' }">PP</th>
                         </tr>
                         <tr *ngFor="let item of stocksWithGapDownOpening$ |async; let i = index">
                             <td [ngStyle]="{'border':'solid 1px', 'padding': '0 5px'}" [style.background-color]="getRowColor(item)"><span>{{item.symbol}}</span></td>
-                            <td [ngStyle]="{'border':'solid 1px', 'padding':'0 5px'}"><span>{{item.s2}}</span></td>
-                            <td [ngStyle]="{'border':'solid 1px', 'padding':'0 5px'}"><span>{{item.s1}}</span></td>
-                            <td [ngStyle]="{'border':'solid 1px', 'padding':'0 5px'}"><span>{{item.pp}}</span></td>
+                            <td [ngStyle]="{'border':'solid 1px', 'padding':'0 5px'}"><span>{{item.open | number : '1.2-2'}}</span></td>
+                            <td [ngStyle]="{'border':'solid 1px', 'padding':'0 5px'}"><span>{{item.s2 | number : '1.2-2'}}</span></td>
+                            <td [ngStyle]="{'border':'solid 1px', 'padding':'0 5px'}"><span>{{item.s1 | number : '1.2-2'}}</span></td>
+                            <td [ngStyle]="{'border':'solid 1px', 'padding':'0 5px'}"><span>{{item.pp | number : '1.2-2'}}</span></td>
                         </tr>
                     </table>
                 </div>

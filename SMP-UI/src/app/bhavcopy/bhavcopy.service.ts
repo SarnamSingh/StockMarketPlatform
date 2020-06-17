@@ -9,8 +9,8 @@ export class BhavcopyService {
 
     }
 
-    uploadBhavCopy(bhavcopy: any): Observable<any> {
-        const url = "/api/bhavcopy/equity";
+    uploadBhavCopy(bhavcopy: any, bhavcopyType: string): Observable<any> {
+        const url = bhavcopyType.toLowerCase()=="equity"? "/api/bhavcopy/equity":"/api/bhavcopy/fno";
         let body = JSON.stringify(bhavcopy);
         var options = {
             headers: new HttpHeaders({ 'Content-Type': 'application/json' })

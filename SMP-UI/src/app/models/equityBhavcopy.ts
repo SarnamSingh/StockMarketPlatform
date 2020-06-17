@@ -1,4 +1,4 @@
-export class BhavcopyModel {
+export class EquityBhavcopyModel {
     symbol: string
     series: string
     open: number
@@ -9,7 +9,7 @@ export class BhavcopyModel {
     prevClose: number
     totTrdQty: number
     totTrdVal: number
-    tradedOn: Date
+    tradedOn: string
     totalTrades: number
     ISIN: string
 
