@@ -1,15 +1,15 @@
 <div style="width: 100%;">
 
 
-    <div style="margin-top: 20px;
+    <div style="margin-top: 0px;
     float: left;
-    width: 28.5%;
+    width: 17%;
     position: relative;
     border: solid 1px #eee;
-    margin-right: 20px;
+    margin-right: 5px;
     background: rgba(238, 238, 238, 0.38);
     box-shadow: 0px 3px 7px #c1baba;">
-        <div style="font-size: 20px;
+        <div style="font-size: 15px;
         color: #000;
         font-weight: bold;
         background: #87ceeb;
@@ -17,29 +17,35 @@
 
         <div style="padding: 15px;">
             <div>
-                <div style="display:inline-flex">
-                    <label for="priceRange">Stock Price</label> &nbsp;&nbsp;
-                    <select [(ngModel)]="selectedPriceRange.idx" (change)="OnPriceRangeChange($event.target)"
+                <div style="display:inline-flex; margin-top: 5px;">
+                    <label for="priceRange" style="display:inline-block;width: 50px;">Price</label> &nbsp;&nbsp;
+                    <!-- <select [(ngModel)]="selectedPriceRange.idx" (change)="OnPriceRangeChange($event.target)"
                         #priceRange>
                         <option *ngFor="let priceRange of priceRanges" [value]="priceRange.idx">{{priceRange.price}}
                         </option>
-                    </select> &nbsp;&nbsp;
-                    <label for="coiRange">COI Change</label> &nbsp;&nbsp;
-                    <select [(ngModel)]="selectedCOIRange.idx" (change)="OnCOIRangeChange($event.target)" #coiRange>
+                    </select> &nbsp;&nbsp; -->
+                    <input type="text" [(ngModel)]="priceValue" style="width: 135px;">
+                </div>
+                <div style="display:inline-flex; margin-top: 5px;">
+                    <label for="coiRange" style="display:inline-block;width: 50px">COI </label> &nbsp;&nbsp;
+                    <!-- <select [(ngModel)]="selectedCOIRange.idx" (change)="OnCOIRangeChange($event.target)" #coiRange>
                         <option *ngFor="let coiRange of coiRanges" [value]="coiRange.idx">{{coiRange.coi}}</option>
-                    </select> &nbsp;&nbsp;
+                    </select> &nbsp;&nbsp; -->
+                    <input type="text" [(ngModel)]="coiValue" style="width: 135px;">
+                </div>
+                <div style="display:inline-flex; margin-top: 5px;">
+                    <label for="trackButton" style="display:inline-block;width: 58px;"></label>
                     <input type="button" [value]="this.startTracking?'Start Tracking':'Stop Tracking'"
-                        (click)="OnTrackScriptButtonClick()" /> &nbsp;&nbsp;
-
+                        (click)="OnTrackScriptButtonClick()" style="width: 142px;" />
                 </div>
             </div><br>
 
-            <div  [style]="displayStocksWithHighCOI?'display:block':'display:none'"> 
+            <div [style]="displayStocksWithHighCOI?'display:block':'display:none'">
                 <table
                     [ngStyle]="{ 'padding':0, 'border': 'solid 1px ', 'border-collapse':'collapse', 'height':'65vh', 'overflow-y':'auto', 'display':'inline-block' }">
                     <tr>
-                        <th [ngStyle]="{'border':'solid 1px', 'text-align':'left', 'width':'27%'}"> Script Name</th>
-                        <th [ngStyle]="{'border':'solid 1px','text-align':'left', 'width':'27%'}">COI</th>
+                        <th [ngStyle]="{'border':'solid 1px', 'text-align':'left'}"> Script Name</th>
+                        <th [ngStyle]="{'border':'solid 1px','text-align':'left'}">COI</th>
                     </tr>
                     <tr *ngFor="let item of selectedStock$ |async; let i = index"
                         [ngStyle]="{'background-color': i%2===0 ? 'skyblue' : 'white' }">
@@ -47,44 +53,50 @@
                         <td [ngStyle]="{'border':'solid 1px', 'padding':'0 5px'}"><span>{{item.coi}}</span></td>
                     </tr>
                 </table>
-                <img #progressBar src="./assets/progress.gif" width="50px"
-                    style=" display: none; position: absolute; top: 65px; right: 20px;" />
+                <!-- <img #progressBar src="./assets/progress.gif" width="50px"
+                    style=" display: none; position: absolute; top: 65px; right: 20px;" /> -->
             </div>
         </div>
     </div>
 
-
-
-    <div style="margin-top: 22px; float:left; width:69%;background: rgba(238, 238, 238, 0.38);
+    <div style="margin-top: 0px; margin-right: 5px; float:left; width:30%;background: rgba(238, 238, 238, 0.38);
     box-shadow: 0px 3px 7px #c1baba;">
-        <div style="font-size: 20px;
+        <div style="font-size: 15px;
         color: #000;
         font-weight: bold;
         background: #87ceeb;
         padding: 5px;">Stocks With Gap Up/Down Opening</div>
         <div style="padding: 5px;"></div>
         <div>
-            <div style="display: inline-flex; margin-left: 10px;">
-                <label for="previousDayBhavCopy" style="display:inline-block;">Bhavcopy</label>&nbsp;&nbsp;
+            <div style="display: inline-flex; margin-left: 10px; margin-top: 5px;">
+                <label for="previousDayBhavCopy" style="display:inline-block; width: 85px;">Bhavcopy</label>&nbsp;&nbsp;
                 <input type="file" (change)="OnBhavcopyBrowseSelect($event.target)" #previousDayBhavCopy>&nbsp;&nbsp;
-                <label for="preOpenMarketData" style="display:inline-block;">PreOpenData</label>&nbsp;&nbsp;
+
+            </div>
+            <div style="display: inline-flex; margin-left: 10px; margin-top: 5px;">
+                <label for="preOpenMarketData" style="display:inline-block;width: 85px;">PreOpenData</label>&nbsp;&nbsp;
                 <input type="file" (change)="OnPreOpenMarketDataFileSelect($event.target)" #preOpenMarketData>
+
+            </div>
+            <div style="display: inline-flex; margin-left: 10px; margin-top: 5px;">
+                <label for="openPriceValue" style="display:inline-block; width: 85px;">Price</label>&nbsp;&nbsp;
+                <input type="text" [(ngModel)]="openPriceValue">&nbsp;&nbsp;
                 <input type="button" value="Search" (click)="OnSearchButtonClick()">
             </div>
         </div><br>
-        <div style="display: flex;">
+        <div>
 
-            <fieldset style="width: 45%;">
-                <legend style="font-size: 18px;
+            <fieldset style="width: 90%;">
+                <legend style="font-size: 14px;
                 color: #000;
                 font-weight: bold;
                 background: #87ceeb;
                 padding: 0 15px;">Stocks with gap up opening</legend>
-  
-  
-  <div [style]="displayStocksWithGapUpOpening?'display:block':'display:none'">
+
+
+                <div [style]="displayStocksWithGapUpOpening?'display:block':'display:none'">
                     <table
-                        [ngStyle]="{ 'padding':0, 'border': 'solid 1px ', 'border-collapse':'collapse', 'height':'65vh', 'overflow-y':'auto', 'display':'inline-block','width':'100%' }">
+                        [ngStyle]="{ 'padding':0, 'border': 'solid 1px ', 'border-collapse':'collapse','min-height':'10vh', 'max-height':'65vh', 'overflow-y':'auto', 'display':'inline-block','width':'100%' }">
                         <tr>
                             <th [ngStyle]="{'border':'solid 1px', 'text-align':'left'}"> Symbol</th>
                             <th [ngStyle]="{'border':'solid 1px','text-align':'left' }">Open</th>
@@ -93,26 +105,31 @@
                             <th [ngStyle]="{'border':'solid 1px','text-align':'left' }">PP</th>
                         </tr>
                         <tr *ngFor="let item of stocksWithGapUpOpening$ |async; let i = index">
-                      
-                            <td [ngStyle]="{'border':'solid 1px', 'padding': '0 5px'}" [style.background-color]="getRowColor(item)"><span>{{item.symbol}}</span></td>
-                            <td [ngStyle]="{'border':'solid 1px', 'padding':'0 5px'}"><span>{{item.open | number : '1.2-2'}}</span></td>
-                            <td [ngStyle]="{'border':'solid 1px', 'padding':'0 5px'}"><span>{{item.r2 | number : '1.2-2'}}</span></td>
-                            <td [ngStyle]="{'border':'solid 1px', 'padding':'0 5px'}"><span>{{item.r1 | number : '1.2-2'}}</span></td>
-                            <td [ngStyle]="{'border':'solid 1px', 'padding':'0 5px'}"><span>{{item.pp | number : '1.2-2'}}</span></td>
+
+                            <td [ngStyle]="{'border':'solid 1px', 'padding': '0 5px'}"
+                                [style.background-color]="getRowColor(item)"><span>{{item.symbol}}</span></td>
+                            <td [ngStyle]="{'border':'solid 1px', 'padding':'0 5px'}">
+                                <span>{{item.open | number : '1.2-2'}}</span></td>
+                            <td [ngStyle]="{'border':'solid 1px', 'padding':'0 5px'}">
+                                <span>{{item.r2 | number : '1.2-2'}}</span></td>
+                            <td [ngStyle]="{'border':'solid 1px', 'padding':'0 5px'}">
+                                <span>{{item.r1 | number : '1.2-2'}}</span></td>
+                            <td [ngStyle]="{'border':'solid 1px', 'padding':'0 5px'}">
+                                <span>{{item.pp | number : '1.2-2'}}</span></td>
                         </tr>
                     </table>
                 </div>
-                 </fieldset><br>
+            </fieldset><br>
 
-            <fieldset style="width: 45%;">
-                <legend style="font-size: 18px;
+            <fieldset style="width: 90%;">
+                <legend style="font-size: 14px;
                 color: #000;
                 font-weight: bold;
                 background: #87ceeb;
                 padding: 0 15px;">Stocks with gap down opening</legend>
                 <div [style]="displayStocksWithGapDownOpening?'display:block':'display:none'">
                     <table
-                        [ngStyle]="{ 'padding':0, 'border': 'solid 1px ', 'border-collapse':'collapse', 'height':'65vh', 'overflow-y':'auto', 'display':'inline-block','width':'100%' }">
+                        [ngStyle]="{ 'padding':0, 'border': 'solid 1px ', 'border-collapse':'collapse','min-height':'10vh' ,'max-height':'65vh', 'overflow-y':'auto', 'display':'inline-block','width':'100%' }">
                         <tr>
                             <th [ngStyle]="{'border':'solid 1px', 'text-align':'left'}"> Symbol</th>
                             <th [ngStyle]="{'border':'solid 1px','text-align':'left' }">Open</th>
@@ -121,15 +138,99 @@
                             <th [ngStyle]="{'border':'solid 1px','text-align':'left' }">PP</th>
                         </tr>
                         <tr *ngFor="let item of stocksWithGapDownOpening$ |async; let i = index">
-                            <td [ngStyle]="{'border':'solid 1px', 'padding': '0 5px'}" [style.background-color]="getRowColor(item)"><span>{{item.symbol}}</span></td>
-                            <td [ngStyle]="{'border':'solid 1px', 'padding':'0 5px'}"><span>{{item.open | number : '1.2-2'}}</span></td>
-                            <td [ngStyle]="{'border':'solid 1px', 'padding':'0 5px'}"><span>{{item.s2 | number : '1.2-2'}}</span></td>
-                            <td [ngStyle]="{'border':'solid 1px', 'padding':'0 5px'}"><span>{{item.s1 | number : '1.2-2'}}</span></td>
-                            <td [ngStyle]="{'border':'solid 1px', 'padding':'0 5px'}"><span>{{item.pp | number : '1.2-2'}}</span></td>
+                            <td [ngStyle]="{'border':'solid 1px', 'padding': '0 5px'}"
+                                [style.background-color]="getRowColor(item)"><span>{{item.symbol}}</span></td>
+                            <td [ngStyle]="{'border':'solid 1px', 'padding':'0 5px'}">
+                                <span>{{item.open | number : '1.2-2'}}</span></td>
+                            <td [ngStyle]="{'border':'solid 1px', 'padding':'0 5px'}">
+                                <span>{{item.s2 | number : '1.2-2'}}</span></td>
+                            <td [ngStyle]="{'border':'solid 1px', 'padding':'0 5px'}">
+                                <span>{{item.s1 | number : '1.2-2'}}</span></td>
+                            <td [ngStyle]="{'border':'solid 1px', 'padding':'0 5px'}">
+                                <span>{{item.pp | number : '1.2-2'}}</span></td>
                         </tr>
                     </table>
                 </div>
             </fieldset>
+
+        </div>
+    </div>
+    <div style="margin-top: 0px; float:left;width:52%;background: rgba(238, 238, 238, 0.38);
+    box-shadow: 0px 3px 7px #c1baba;">
+        <div style="font-size: 15px;
+        color: #000;
+        font-weight: bold;
+        background: #87ceeb;
+        padding: 5px;">Two Day Relationship with width</div>
+        <!-- <div style="padding: 5px;"></div> -->
+        <div style="margin-left: 10px; margin-top: 5px; margin-bottom: 5px;">
+            <div style="display: inline-flex; ">
+                <div style="display: inline-flex; margin-left: 10px;margin-top: 5px;">
+                    <label for="fromDate" style="display:inline-block;width: 50px;">From</label>
+                    <input type="date" [(ngModel)]="fromDate" style="width: 125px;">
+                </div>
+
+                <div style="display: inline-flex; margin-left: 10px;margin-top: 5px;">
+                    <label for="toDate" style="display:inline-block;width: 50px; text-align: right; margin-right: 5px;">To</label>
+                    <input type="date" [(ngModel)]="toDate" style="width: 125px;">
+                </div>
+                <div style="display: inline-flex; margin-left: 10px;margin-top: 5px;">
+                    <label for="priceValueForRelationship" style="display:inline-block;width: 50px; text-align: right; margin-right: 5px;">Price</label>
+                    <input type="text" [(ngModel)]="twoDayRelationshipFilter.price" style="width: 137px;">
+                </div>
+                
+            </div>
+            <div style="display: inline-flex; ">
+                <div style="display: inline-flex; margin-left: 10px;margin-top: 5px;">
+                    <label for="width" style="display:inline-block;width: 50px;">width</label>
+                    <input type="text" [(ngModel)]="twoDayRelationshipFilter.fromFloorPointWidth" style="width: 50px;">
+                    &nbsp;<span>-</span>&nbsp;
+                    <input type="text" [(ngModel)]="twoDayRelationshipFilter.toFloorPointWidth" style="width: 50px;">
+                </div>
+
+                <div style="display: inline-flex; margin-left: 10px;margin-top: 5px;">
+                    <label for="toDate" style="display:inline-block;width: 50px;"></label>
+                    &nbsp;<input type="button" value="Search" style="width:145px;" (click)="OnSearchRelationshipClick()">
+                    <img #progressBar src="./assets/progress.gif" width="50px" height="20px"
+                        style="position:static; display: none; vertical-align: middle;" />
+                </div>
+            </div>
+        </div>
+        <div [style]="displayStocksWithTwoDayRelationship?'display:block':'display:none'">
+            <table
+                [ngStyle]="{ 'padding':0, 'border': 'solid 1px ', 'border-collapse':'collapse', 'height':'75vh', 'overflow-y':'auto', 'display':'inline-block' }">
+                <tr>
+                    <th [ngStyle]="{'border':'solid 1px','text-align':'left'}"> SYMBOL</th>
+                    <!-- <th [ngStyle]="{'border':'solid 1px','text-align':'left'}">TC</th>
+                    <th [ngStyle]="{'border':'solid 1px','text-align':'left'}">BC</th> -->
+                    <th [ngStyle]="{'border':'solid 1px','text-align':'left'}">FPW</th>
+                    <th [ngStyle]="{'border':'solid 1px','text-align':'left'}">FPR</th>
+                    <th [ngStyle]="{'border':'solid 1px','text-align':'left'}">CR</th>
+                    <th [ngStyle]="{'border':'solid 1px','text-align':'left'}">Close</th>
+                    <th [ngStyle]="{'border':'solid 1px','text-align':'left'}">H3</th>
+                    <th [ngStyle]="{'border':'solid 1px','text-align':'left'}">H4</th>
+                    <th [ngStyle]="{'border':'solid 1px','text-align':'left'}">H5</th>
+                    <th [ngStyle]="{'border':'solid 1px','text-align':'left'}">L3</th>
+                    <th [ngStyle]="{'border':'solid 1px','text-align':'left'}">L4</th>
+                    <th [ngStyle]="{'border':'solid 1px','text-align':'left'}">L5</th>
+                </tr>
+                <tr *ngFor="let item of stocksWithTwoDayRelationship$ |async; let i = index">
+                    <!-- [ngStyle]="{'background-color': i%2===0 ? 'skyblue' : 'white' }"> -->
+                    <td [ngStyle]="{'border':'solid 1px', 'padding': '0 5px'}"><span>{{item.symbol}}</span></td>
+                    <!-- <td [ngStyle]="{'border':'solid 1px', 'padding':'0 5px'}"><span>{{item.tc}}</span></td>
+                    <td [ngStyle]="{'border':'solid 1px', 'padding':'0 5px'}"><span>{{item.bc}}</span></td> -->
+                    <td [ngStyle]="{'border':'solid 1px', 'padding':'0 1px'}"><span>{{item.fpWidth}}</span></td>
+                    <td [ngStyle]="{'border':'solid 1px', 'padding':'0 1px'}"><span>{{item.fpr}}</span></td>
+                    <td [ngStyle]="{'border':'solid 1px', 'padding':'0 1px'}"><span>{{item.cr}}</span></td>
+                    <td [ngStyle]="{'border':'solid 1px', 'padding':'0 1px'}"><span>{{item.closed}}</span></td>
+                    <td [ngStyle]="{'border':'solid 1px', 'padding':'0 1px'}"><span>{{item["h3"]}}</span></td>
+                    <td [ngStyle]="{'border':'solid 1px', 'padding':'0 1px'}"><span>{{item["h4"]}}</span></td>
+                    <td [ngStyle]="{'border':'solid 1px', 'padding':'0 1px'}"><span>{{item["h5"]}}</span></td>
+                    <td [ngStyle]="{'border':'solid 1px', 'padding':'0 1px'}"><span>{{item["l3"]}}</span></td>
+                    <td [ngStyle]="{'border':'solid 1px', 'padding':'0 1px'}"><span>{{item["l4"]}}</span></td>
+                    <td [ngStyle]="{'border':'solid 1px', 'padding':'0 1px'}"><span>{{item["l5"]}}</span></td>
+                </tr>
+            </table>
 
         </div>
     </div>

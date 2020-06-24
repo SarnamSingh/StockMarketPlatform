@@ -1,30 +1,44 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, Output, OnDestroy } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import { HomeService } from './home.service'
 import { environment } from '../../environments/environment';
-import { Observable, Subject, Subscription, timer, interval } from 'rxjs';
+import { Observable, Subject, Subscription, timer, interval, from, of } from 'rxjs';
 import { script } from '../models/scriptModel';
 import { EquityBhavcopyModel } from '../models/equityBhavcopy';
 import { PreOpenMarketDataModel } from '../models/preOpenMarketData';
+import { TwoDayRelationshipFilter } from '../models/twoDayRelationshipFilter';
+import {TwoDayRelationshipResult} from '../models/twoDayRelationshipResult';
+import { BhavcopyService } from '../bhavcopy/bhavcopy.service';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
-  providers: [HomeService]
+  providers: [HomeService, BhavcopyService]
 })
-export class HomeComponent {
+export class HomeComponent implements OnDestroy {
 
   title = 'scriptcoitracker';
   trackingStatus = '';
   startTracking = true;
-  selectedStock$ = new Subject<script[]>();
-  displayStocksWithHighCOI = false;
   scriptArray: Array<script> = [];
+  stocksWithTwoDayRelationshipArray:Array<TwoDayRelationshipResult> = [];
+  selectedStock$ = new Subject<script[]>();
+  stocksWithTwoDayRelationship$ :Observable<TwoDayRelationshipResult[]>;
+  displayStocksWithHighCOI = false;
+  displayStocksWithTwoDayRelationship = false;
+  
   currentProgress = 0;
   minimumCOIChange = 0;
   minimumPrice = 0;
   currentStockPrice = 0;
+  priceValue = 100;
+  coiValue = 200000;
+  openPriceValue = 100;
+  priceValueForRelationship = 100;
+  currentDate: Date = new Date();
+  fromDate: Date = new Date();
+  toDate: Date = new Date();
   priceRanges = [{ idx: 0, price: 'All' }, { idx: 1, price: '> 100' }, { idx: 2, price: '> 200' }, { idx: 3, price: '> 300' }, { idx: 4, price: '> 400' }, { idx: 5, price: '> 500' }, { idx: 6, price: '> 600' }, { idx: 7, price: '> 700' }, { idx: 8, price: '> 800' }, { idx: 9, price: '> 900' }, { idx: 10, price: '> 1000' }];
   selectedPriceRange = { idx: 1, price: '> 100' };
   coiRanges = [{ idx: 0, coi: '> 50000' }, { idx: 1, coi: '> 100000' }, { idx: 2, coi: '> 150000' },
@@ -42,18 +56,26 @@ export class HomeComponent {
   displayStocksWithGapUpOpening = false;
   displayStocksWithGapDownOpening = false;
 
+  twoDayRelationshipFilter: TwoDayRelationshipFilter = new TwoDayRelationshipFilter();
+
   @ViewChild('progressBar')
   private progressBar: ElementRef;
-  
+
 
   private subscription: Subscription;
 
   definedInterval: Observable<number> = interval(300000);
 
-  constructor(private homeService: HomeService, private httpClient: HttpClient) {
-    
+  constructor(private homeService: HomeService, private httpClient: HttpClient, private bhavcopyService: BhavcopyService) {
+    this.fromDate.setDate(this.currentDate.getDate() - 2);
+    this.toDate.setDate(this.currentDate.getDate() - 1);
+    this.twoDayRelationshipFilter.price = 100;
+    this.twoDayRelationshipFilter.fromFloorPointWidth = 0;
+    this.twoDayRelationshipFilter.toFloorPointWidth = 1;
   }
-
+ ngOnDestroy(){
+   
+ }
   OnPriceRangeChange(selectedPriceRangeOption) {
     this.selectedPriceRange = this.priceRanges.find(item => item.idx == selectedPriceRangeOption.value);
   }
@@ -61,7 +83,7 @@ export class HomeComponent {
   OnCOIRangeChange(selectedCOIRangeOption) {
     this.selectedCOIRange = this.coiRanges.find(item => item.idx == selectedCOIRangeOption.value);
   }
-  
+
   getContentFromAnotherPortal() {
     this.currentProgress = 0;
     //this.progressBar.nativeElement.style.display = "block";
@@ -168,21 +190,21 @@ export class HomeComponent {
     return csvArr;
   }
 
-   csvToArray(text) {
+  csvToArray(text) {
     let p = '', row = [''], ret = [row], i = 0, r = 0, s = !0, l;
     for (l of text) {
-        if ('"' === l) {
-            if (s && l === p) row[i] += l;
-            s = !s;
-        } else if (',' === l && s) l = row[++i] = '';
-        else if ('\n' === l && s) {
-            if ('\r' === p) row[i] = row[i].slice(0, -1);
-            row = ret[++r] = [l = '']; i = 0;
-        } else row[i] += l;
-        p = l;
+      if ('"' === l) {
+        if (s && l === p) row[i] += l;
+        s = !s;
+      } else if (',' === l && s) l = row[++i] = '';
+      else if ('\n' === l && s) {
+        if ('\r' === p) row[i] = row[i].slice(0, -1);
+        row = ret[++r] = [l = '']; i = 0;
+      } else row[i] += l;
+      p = l;
     }
     return ret;
-};
+  };
   OnPreOpenMarketDataFileSelect(input: HTMLInputElement) {
     const files = input.files;
     if (files && files.length) {
@@ -209,11 +231,11 @@ export class HomeComponent {
         csvRecord.symbol = currentRecord[0].trim();
         csvRecord.prevClose = +currentRecord[1].trim();
         csvRecord.iepPrice = +currentRecord[2].trim();
-        csvRecord.change = currentRecord[3] && currentRecord[3].trim()!='-'?+currentRecord[3]:0;
-        csvRecord.changePercentage = currentRecord[4]&& currentRecord[4].trim()!='-'?+currentRecord[4]:0;
-        csvRecord.finalPrice = currentRecord[5].trim()&& currentRecord[5].trim()!='-'?+currentRecord[5]:0;
+        csvRecord.change = currentRecord[3] && currentRecord[3].trim() != '-' ? +currentRecord[3] : 0;
+        csvRecord.changePercentage = currentRecord[4] && currentRecord[4].trim() != '-' ? +currentRecord[4] : 0;
+        csvRecord.finalPrice = currentRecord[5].trim() && currentRecord[5].trim() != '-' ? +currentRecord[5] : 0;
         csvRecord.finalQuantity = +currentRecord[6].trim();
-        csvRecord.value = currentRecord[7].trim()&& currentRecord[7].trim()!='-'?+currentRecord[7]:0;
+        csvRecord.value = currentRecord[7].trim() && currentRecord[7].trim() != '-' ? +currentRecord[7] : 0;
         csvRecord.ffmCap = +currentRecord[8].trim();
         csvRecord.nm52WH = +currentRecord[9].trim();
         csvRecord.nm52WL = +currentRecord[10].trim();
@@ -225,8 +247,10 @@ export class HomeComponent {
   }
   OnTrackScriptButtonClick() {
     this.displayStocksWithHighCOI = false;
-    this.minimumPrice = + (this.selectedPriceRange.idx == 0 ? '0' : (this.selectedPriceRange.price.split(' '))[1]);
-    this.minimumCOIChange = + (this.selectedCOIRange.coi.split(' '))[1];
+    //this.minimumPrice = + (this.selectedPriceRange.idx == 0 ? '0' : (this.selectedPriceRange.price.split(' '))[1]);
+    this.minimumPrice = + this.priceValue;
+    //this.minimumCOIChange = + (this.selectedCOIRange.coi.split(' '))[1];
+    this.minimumCOIChange = + this.coiValue;
     if (this.startTracking) {
       this.getContentFromAnotherPortal();
       this.subscription = this.definedInterval.subscribe(seconds => {
@@ -245,57 +269,107 @@ export class HomeComponent {
     this.displayStocksWithGapUpOpening = false;
     this.displayStocksWithGapDownOpening = false;
     this.preOpenMarketDataArray.forEach(preOpenStock => {
-      let bhavcopyData = this.bhavcopyArray.find(bhavcopy => bhavcopy.symbol === preOpenStock.symbol && bhavcopy.series.toLowerCase() === "eq");
-      if (bhavcopyData && preOpenStock.iepPrice >= bhavcopyData.high) {
+      if (preOpenStock.iepPrice >= +this.openPriceValue) {
+        let bhavcopyData = this.bhavcopyArray.find(bhavcopy => bhavcopy.symbol === preOpenStock.symbol && bhavcopy.series.toLowerCase() === "eq");
         const pp = (bhavcopyData.high + bhavcopyData.low + bhavcopyData.last) / 3;
         const r1 = 2 * pp - bhavcopyData.low;
         const r2 = pp + (bhavcopyData.high - bhavcopyData.low);
-        this.stocksWithGapUpOpening.push({
-          'symbol': preOpenStock.symbol,
-          'isEqualOrAboverR2': preOpenStock.iepPrice >= r2  ? true: false,
-          'isEqualOrAboverR1': preOpenStock.iepPrice >= r1  ? true: false,
-          'isEqualOrAboverPP': preOpenStock.iepPrice >= pp  ? true: false,
-          'r2': r2,
-          'r1': r1,
-          'pp': pp,
-          'open': preOpenStock.iepPrice
-        });
-        this.stocksWithGapUpOpening$.next(this.stocksWithGapUpOpening);
-        this.displayStocksWithGapUpOpening = true;
-      }
-      if (bhavcopyData && preOpenStock.iepPrice <= bhavcopyData.low) {
-        const pp = (bhavcopyData.high + bhavcopyData.low + bhavcopyData.last) / 3;
         const s1 = 2 * pp - bhavcopyData.high;
         const s2 = pp - (bhavcopyData.high - bhavcopyData.low);
-        this.stocksWithGapDownOpening.push({
-          'symbol': preOpenStock.symbol,
-          'isEqualOrBelowS2': preOpenStock.iepPrice <= s2 ? true: false,
-          'isEqualOrBelowS1': preOpenStock.iepPrice <= s1 ? true: false,
-          'isEqualOrBelowPP': preOpenStock.iepPrice <= pp ? true: false,
-          's2': s2,
-          's1': s1,
-          'pp': pp,
-          'open': preOpenStock.iepPrice
-        });
-        this.displayStocksWithGapDownOpening = true;
-        this.stocksWithGapDownOpening$.next(this.stocksWithGapDownOpening);
+        if (bhavcopyData && (preOpenStock.iepPrice >= bhavcopyData.high || preOpenStock.iepPrice >= r2 || preOpenStock.iepPrice >= r1)) {
+          this.stocksWithGapUpOpening.push({
+            'symbol': preOpenStock.symbol,
+            'isEqualOrAboverR2': preOpenStock.iepPrice >= r2 ? true : false,
+            'isEqualOrAboverR1': preOpenStock.iepPrice >= r1 ? true : false,
+            'isEqualOrAboverPP': preOpenStock.iepPrice >= pp ? true : false,
+            'r2': r2,
+            'r1': r1,
+            'pp': pp,
+            'open': preOpenStock.iepPrice
+          });
+          this.stocksWithGapUpOpening$.next(this.stocksWithGapUpOpening);
+          this.displayStocksWithGapUpOpening = true;
+        }
+        if (bhavcopyData && (preOpenStock.iepPrice <= bhavcopyData.low || preOpenStock.iepPrice <= s2 || preOpenStock.iepPrice <= s1)) {
+          this.stocksWithGapDownOpening.push({
+            'symbol': preOpenStock.symbol,
+            'isEqualOrBelowS2': preOpenStock.iepPrice <= s2 ? true : false,
+            'isEqualOrBelowS1': preOpenStock.iepPrice <= s1 ? true : false,
+            'isEqualOrBelowPP': preOpenStock.iepPrice <= pp ? true : false,
+            's2': s2,
+            's1': s1,
+            'pp': pp,
+            'open': preOpenStock.iepPrice
+          });
+          this.displayStocksWithGapDownOpening = true;
+          this.stocksWithGapDownOpening$.next(this.stocksWithGapDownOpening);
+        }
+
       }
     });
   }
-
-  public getRowColor(currentRow):string{
+  public OnSearchRelationshipClick() {
+    this.stocksWithTwoDayRelationshipArray.length = 0;
+    this.progressBar.nativeElement.style.display = 'block';
+    // this.twoDayRelationshipFilter.fromDate = this.fromDate.getMonth()+1+"-"+this.fromDate.getDate()+"-"+this.fromDate.getFullYear();
+    // this.twoDayRelationshipFilter.toDate = this.toDate.getMonth()+1+"-"+this.toDate.getDate()+"-"+this.toDate.getFullYear();
+    const fromDateSplit = this.fromDate.toString().split('-');
+    const toDateSplit = this.toDate.toString().split('-');
+    this.twoDayRelationshipFilter.fromDate = fromDateSplit[1]+'-'+fromDateSplit[2]+'-'+fromDateSplit[0];
+    this.twoDayRelationshipFilter.toDate = toDateSplit[1]+'-'+toDateSplit[2]+'-'+toDateSplit[0];
+    
+    this.bhavcopyService.getTwoDayRelationship(this.twoDayRelationshipFilter).subscribe((output) => {
+      if (output && output.data !==undefined && output.data.length>0) {
+        this.displayStocksWithTwoDayRelationship = true;
+        
+        output.data.forEach(element => {
+          let twoDayRelationshipResult = new TwoDayRelationshipResult();
+          twoDayRelationshipResult.symbol = element.SYMBOL;
+          twoDayRelationshipResult.tc = element.TC;
+          twoDayRelationshipResult.bc = element.BC;
+          twoDayRelationshipResult.fpWidth = element.FLOORPIVOTWIDTH;
+          twoDayRelationshipResult.fpr = element.FloorPointRelationship;
+          twoDayRelationshipResult.cr = element.CamrillaRelationship;
+          twoDayRelationshipResult.closed = element.Closed;
+          twoDayRelationshipResult['h3']= element['H3'];
+          twoDayRelationshipResult['h4']= element['H4'];
+          twoDayRelationshipResult['h5']= element['H5'];
+          twoDayRelationshipResult['l3']= element['L3'];
+          twoDayRelationshipResult['l4']= element['L4'];
+          twoDayRelationshipResult['l5']= element['L5'];
+          this.stocksWithTwoDayRelationshipArray.push(twoDayRelationshipResult)
+          this.stocksWithTwoDayRelationship$ = of( this.stocksWithTwoDayRelationshipArray);
+        });
+       }
+    },
+      (err) => { 
+        this.displayStocksWithTwoDayRelationship = false;
+        //this.stocksWithTwoDayRelationship$.unsubscribe();
+        console.log(err);
+       },
+      () => { this.progressBar.nativeElement.style.display = 'none'; });
+  }
+  public getRowColor(currentRow): string {
     let color: string = "white";
-    if (currentRow.isEqualOrAboverR2 || currentRow.isEqualOrBelowS2 ) {
+    if (currentRow.isEqualOrAboverR2 || currentRow.isEqualOrBelowS2) {
       return color = "green";
     }
-    if (currentRow.isEqualOrAboverR1 || currentRow.isEqualOrBelowS1 ) {
+    if (currentRow.isEqualOrAboverR1 || currentRow.isEqualOrBelowS1) {
       return color = "skyblue";
     }
-    if (currentRow.isEqualOrAboverPP || currentRow.isEqualOrBelowPP ) {
+    if (currentRow.isEqualOrAboverPP || currentRow.isEqualOrBelowPP) {
       return color = "indianred";
     }
     return color;
-    
+
+  }
+
+  public OnFromDateChange(element){
+    this.fromDate = new Date(element.target.value);
+  }
+
+  public OnToDateChange(element){
+    this.toDate = new Date(element.target.value);
   }
 
 }

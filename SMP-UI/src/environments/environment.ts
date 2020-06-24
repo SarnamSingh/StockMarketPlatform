@@ -4,6 +4,7 @@
 
 export const environment = {
   production: false,
+  apiURL: '/api',
   stockMarketOffcialWebsite:"https://www.nseindia.com/live_market/dynaContent/live_watch/option_chain/optionKeys.jsp?symbolCode=1606&symbol=script&symbol=script&instrument=OPTSTK&date=-&segmentLink=17&segmentLink=17",
   stockList:[
     'ACC',

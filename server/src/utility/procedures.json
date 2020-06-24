@@ -239,5 +239,32 @@
             "type": "string",
             "modelProperty": "tradedOn"
         }
+    ],
+    "EquityBhavcopy_CalculateTwoDayRelationship_FloorPivotWithWidth_Camrilla":[
+        {
+            "propColumn": "FromDate",
+            "type": "string",
+            "modelProperty":"fromDate"
+        },
+        {
+            "propColumn": "ToDate",
+            "type": "string",
+            "modelProperty":"toDate"
+        },
+        {
+            "propColumn": "Price",
+            "type": "decimal",
+            "modelProperty":"price"
+        },
+        {
+            "propColumn": "FromWidth",
+            "type": "decimal",
+            "modelProperty":"fromFloorPointWidth"
+        },
+        {
+            "propColumn": "ToWidth",
+            "type": "decimal",
+            "modelProperty":"toFloorPointWidth"
+        }
     ]
 }
