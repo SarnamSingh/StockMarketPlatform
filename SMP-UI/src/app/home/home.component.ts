@@ -7,7 +7,7 @@ import { script } from '../models/scriptModel';
 import { EquityBhavcopyModel } from '../models/equityBhavcopy';
 import { PreOpenMarketDataModel } from '../models/preOpenMarketData';
 import { TwoDayRelationshipFilter } from '../models/twoDayRelationshipFilter';
-import {TwoDayRelationshipResult} from '../models/twoDayRelationshipResult';
+import { TwoDayRelationshipResult } from '../models/twoDayRelationshipResult';
 import { BhavcopyService } from '../bhavcopy/bhavcopy.service';
 
 @Component({
@@ -22,12 +22,12 @@ export class HomeComponent implements OnDestroy {
   trackingStatus = '';
   startTracking = true;
   scriptArray: Array<script> = [];
-  stocksWithTwoDayRelationshipArray:Array<TwoDayRelationshipResult> = [];
+  stocksWithTwoDayRelationshipArray: Array<TwoDayRelationshipResult> = [];
   selectedStock$ = new Subject<script[]>();
-  stocksWithTwoDayRelationship$ :Observable<TwoDayRelationshipResult[]>;
+  stocksWithTwoDayRelationship$: Observable<TwoDayRelationshipResult[]>;
   displayStocksWithHighCOI = false;
   displayStocksWithTwoDayRelationship = false;
-  
+
   currentProgress = 0;
   minimumCOIChange = 0;
   minimumPrice = 0;
@@ -55,6 +55,9 @@ export class HomeComponent implements OnDestroy {
   stocksWithGapDownOpening$ = new Subject<string[]>();
   displayStocksWithGapUpOpening = false;
   displayStocksWithGapDownOpening = false;
+  searchStock = '';
+  searchFPR = '';
+  searchCR = '';
 
   twoDayRelationshipFilter: TwoDayRelationshipFilter = new TwoDayRelationshipFilter();
 
@@ -73,15 +76,60 @@ export class HomeComponent implements OnDestroy {
     this.twoDayRelationshipFilter.fromFloorPointWidth = 0;
     this.twoDayRelationshipFilter.toFloorPointWidth = 1;
   }
- ngOnDestroy(){
-   
- }
+  ngOnDestroy() {
+
+  }
   OnPriceRangeChange(selectedPriceRangeOption) {
     this.selectedPriceRange = this.priceRanges.find(item => item.idx == selectedPriceRangeOption.value);
   }
 
   OnCOIRangeChange(selectedCOIRangeOption) {
     this.selectedCOIRange = this.coiRanges.find(item => item.idx == selectedCOIRangeOption.value);
+  }
+  onStockSearch(element) {
+    this.searchStock = element.target.value;
+    if (this.searchStock !== undefined && this.searchStock != null && this.searchStock.length > 0) {
+      var filtereredTwoDayRelationship = this.stocksWithTwoDayRelationshipArray.filter(item => {
+        return item.symbol.toLowerCase().startsWith(this.searchStock.toLowerCase()) &&
+          item.fpr.toLowerCase().startsWith(this.searchFPR.length > 0 ? this.searchFPR.toLowerCase() : item.fpr.toLowerCase()) &&
+          (item.cr.toLowerCase().startsWith(this.searchCR.length > 0 ? this.searchCR.toLowerCase() : item.cr.toLowerCase()))
+      });
+
+      this.stocksWithTwoDayRelationship$ = of(filtereredTwoDayRelationship);
+    }
+  }
+  onFPRSearch(element) {
+    this.searchFPR = element.target.value;
+    if (this.searchFPR != null && this.searchFPR.length > 0) {
+      var filtereredTwoDayRelationship = this.stocksWithTwoDayRelationshipArray.filter(item => {
+        return item.symbol.toLowerCase().startsWith(this.searchStock.length > 0 ? this.searchStock.toLowerCase() : item.symbol.toLowerCase()) &&
+          item.fpr.toLowerCase().startsWith(this.searchFPR.toLowerCase()) &&
+          (item.cr.toLowerCase().startsWith(this.searchCR.length > 0 ? this.searchCR.toLowerCase() : item.cr.toLowerCase()))
+      });
+
+      this.stocksWithTwoDayRelationship$ = of(filtereredTwoDayRelationship);
+
+    }
+  }
+  onCRSearch(element) {
+    this.searchCR = element.target.value;
+    if (this.searchCR != null && this.searchCR.length > 0) {
+      var filtereredTwoDayRelationship = this.stocksWithTwoDayRelationshipArray.filter(item => {
+        return item.symbol.toLowerCase().startsWith(this.searchStock.length > 0 ? this.searchStock.toLowerCase() : item.symbol.toLowerCase()) &&
+          item.fpr.toLowerCase().startsWith(this.searchFPR.length > 0 ? this.searchFPR.toLowerCase() : item.fpr.toLowerCase()) &&
+          (item.cr.toLowerCase().startsWith(this.searchCR.toLowerCase()))
+      });
+
+      this.stocksWithTwoDayRelationship$ = of(filtereredTwoDayRelationship);
+
+    }
+  }
+
+  clearGridFilters(){
+    this.searchStock = '';
+    this.searchFPR = '';
+    this.searchCR = '';
+    this.stocksWithTwoDayRelationship$ = of (this.stocksWithTwoDayRelationshipArray);
   }
 
   getContentFromAnotherPortal() {
@@ -315,13 +363,13 @@ export class HomeComponent implements OnDestroy {
     // this.twoDayRelationshipFilter.toDate = this.toDate.getMonth()+1+"-"+this.toDate.getDate()+"-"+this.toDate.getFullYear();
     const fromDateSplit = this.fromDate.toString().split('-');
     const toDateSplit = this.toDate.toString().split('-');
-    this.twoDayRelationshipFilter.fromDate = fromDateSplit[1]+'-'+fromDateSplit[2]+'-'+fromDateSplit[0];
-    this.twoDayRelationshipFilter.toDate = toDateSplit[1]+'-'+toDateSplit[2]+'-'+toDateSplit[0];
-    
+    this.twoDayRelationshipFilter.fromDate = fromDateSplit[1] + '-' + fromDateSplit[2] + '-' + fromDateSplit[0];
+    this.twoDayRelationshipFilter.toDate = toDateSplit[1] + '-' + toDateSplit[2] + '-' + toDateSplit[0];
+
     this.bhavcopyService.getTwoDayRelationship(this.twoDayRelationshipFilter).subscribe((output) => {
-      if (output && output.data !==undefined && output.data.length>0) {
+      if (output && output.data !== undefined && output.data.length > 0) {
         this.displayStocksWithTwoDayRelationship = true;
-        
+
         output.data.forEach(element => {
           let twoDayRelationshipResult = new TwoDayRelationshipResult();
           twoDayRelationshipResult.symbol = element.SYMBOL;
@@ -331,22 +379,22 @@ export class HomeComponent implements OnDestroy {
           twoDayRelationshipResult.fpr = element.FloorPointRelationship;
           twoDayRelationshipResult.cr = element.CamrillaRelationship;
           twoDayRelationshipResult.closed = element.Closed;
-          twoDayRelationshipResult['h3']= element['H3'];
-          twoDayRelationshipResult['h4']= element['H4'];
-          twoDayRelationshipResult['h5']= element['H5'];
-          twoDayRelationshipResult['l3']= element['L3'];
-          twoDayRelationshipResult['l4']= element['L4'];
-          twoDayRelationshipResult['l5']= element['L5'];
+          twoDayRelationshipResult['h3'] = element['H3'];
+          twoDayRelationshipResult['h4'] = element['H4'];
+          twoDayRelationshipResult['h5'] = element['H5'];
+          twoDayRelationshipResult['l3'] = element['L3'];
+          twoDayRelationshipResult['l4'] = element['L4'];
+          twoDayRelationshipResult['l5'] = element['L5'];
           this.stocksWithTwoDayRelationshipArray.push(twoDayRelationshipResult)
-          this.stocksWithTwoDayRelationship$ = of( this.stocksWithTwoDayRelationshipArray);
+          this.stocksWithTwoDayRelationship$ = of(this.stocksWithTwoDayRelationshipArray);
         });
-       }
+      }
     },
-      (err) => { 
+      (err) => {
         this.displayStocksWithTwoDayRelationship = false;
         //this.stocksWithTwoDayRelationship$.unsubscribe();
         console.log(err);
-       },
+      },
       () => { this.progressBar.nativeElement.style.display = 'none'; });
   }
   public getRowColor(currentRow): string {
@@ -364,11 +412,11 @@ export class HomeComponent implements OnDestroy {
 
   }
 
-  public OnFromDateChange(element){
+  public OnFromDateChange(element) {
     this.fromDate = new Date(element.target.value);
   }
 
-  public OnToDateChange(element){
+  public OnToDateChange(element) {
     this.toDate = new Date(element.target.value);
   }
 

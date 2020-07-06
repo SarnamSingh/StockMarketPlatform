@@ -3,7 +3,7 @@ const router = express.Router();
 const TwoDayRelationshipFilter = require('../models/twoDayRelationshipFilter');
 
 const executeQuery = require('../utility/dbHelper');
-const utility = require('../utility/utility');
+let utility = require('../utility/utility');
 
 router.get('/equity/getTwoDayRelationship/:fromDate/:toDate/:price/:fromFloorPointWidth/:toFloorPointWidth', (req, res)=>{
     const twoDayRelationshipFilter = new TwoDayRelationshipFilter();

@@ -28,7 +28,6 @@ exports. getResponse = (err, data)=>{
             delete responseDetail.errorMessage;
             
         }
-
         return responseDetail;
 }
 

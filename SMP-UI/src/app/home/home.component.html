@@ -3,7 +3,7 @@
 
     <div style="margin-top: 0px;
     float: left;
-    width: 17%;
+    width: 16%;
     position: relative;
     border: solid 1px #eee;
     margin-right: 5px;
@@ -15,7 +15,8 @@
         background: #87ceeb;
         padding: 5px;"> Stocks with high COI </div>
 
-        <div style="padding: 15px;">
+        <!-- <div style="padding: 15px;"> -->
+            <div style="margin-left: 10px; margin-top: 5px; margin-bottom: 5px;">
             <div>
                 <div style="display:inline-flex; margin-top: 5px;">
                     <label for="priceRange" style="display:inline-block;width: 50px;">Price</label> &nbsp;&nbsp;
@@ -59,15 +60,15 @@
         </div>
     </div>
 
-    <div style="margin-top: 0px; margin-right: 5px; float:left; width:30%;background: rgba(238, 238, 238, 0.38);
+    <div style="margin-top: 0px; margin-right: 5px; float:left; width:29%;background: rgba(238, 238, 238, 0.38);
     box-shadow: 0px 3px 7px #c1baba;">
         <div style="font-size: 15px;
         color: #000;
         font-weight: bold;
         background: #87ceeb;
         padding: 5px;">Stocks With Gap Up/Down Opening</div>
-        <div style="padding: 5px;"></div>
-        <div>
+        <!-- <div style="padding: 5px;"></div> -->
+        <div style="margin-left: 10px; margin-top: 5px; margin-bottom: 5px;">
             <div style="display: inline-flex; margin-left: 10px; margin-top: 5px;">
                 <label for="previousDayBhavCopy" style="display:inline-block; width: 85px;">Bhavcopy</label>&nbsp;&nbsp;
                 <input type="file" (change)="OnBhavcopyBrowseSelect($event.target)" #previousDayBhavCopy>&nbsp;&nbsp;
@@ -83,7 +84,7 @@
                 <input type="text" [(ngModel)]="openPriceValue">&nbsp;&nbsp;
                 <input type="button" value="Search" (click)="OnSearchButtonClick()">
             </div>
-        </div><br>
+        </div>
         <div>
 
             <fieldset style="width: 90%;">
@@ -155,7 +156,7 @@
 
         </div>
     </div>
-    <div style="margin-top: 0px; float:left;width:52%;background: rgba(238, 238, 238, 0.38);
+    <div style="margin-top: 0px; float:left;width:54%;background: rgba(238, 238, 238, 0.38);
     box-shadow: 0px 3px 7px #c1baba;">
         <div style="font-size: 15px;
         color: #000;
@@ -197,15 +198,28 @@
             </div>
         </div>
         <div [style]="displayStocksWithTwoDayRelationship?'display:block':'display:none'">
+            <div style="float:right;text-align: right;">
+                <img src="./assets/Actions-view-refresh-icon.png" (click)="clearGridFilters()" 
+                height="16px" width="16px" style="margin-right: 5px;">
+            </div>
             <table
                 [ngStyle]="{ 'padding':0, 'border': 'solid 1px ', 'border-collapse':'collapse', 'height':'75vh', 'overflow-y':'auto', 'display':'inline-block' }">
                 <tr>
-                    <th [ngStyle]="{'border':'solid 1px','text-align':'left'}"> SYMBOL</th>
+                    <th [ngStyle]="{'border':'solid 1px','text-align':'left'}"> 
+                        <input type="text" placeholder="stock" style ="width: 90%;" 
+                        [ngModel]="searchStock" (keyup)="onStockSearch($event)">
+                    </th>
                     <!-- <th [ngStyle]="{'border':'solid 1px','text-align':'left'}">TC</th>
                     <th [ngStyle]="{'border':'solid 1px','text-align':'left'}">BC</th> -->
                     <th [ngStyle]="{'border':'solid 1px','text-align':'left'}">FPW</th>
-                    <th [ngStyle]="{'border':'solid 1px','text-align':'left'}">FPR</th>
-                    <th [ngStyle]="{'border':'solid 1px','text-align':'left'}">CR</th>
+                    <th [ngStyle]="{'border':'solid 1px','text-align':'left'}">
+                        <input type="text" placeholder="FPR" style ="width: 70%;" 
+                        [ngModel]="searchFPR" (keyup)="onFPRSearch($event)">
+                    </th>
+                    <th [ngStyle]="{'border':'solid 1px','text-align':'left'}">
+                        <input type="text" placeholder="CR" style ="width: 70%;" 
+                        [ngModel]="searchCR" (keyup)="onCRSearch($event)">
+                    </th>
                     <th [ngStyle]="{'border':'solid 1px','text-align':'left'}">Close</th>
                     <th [ngStyle]="{'border':'solid 1px','text-align':'left'}">H3</th>
                     <th [ngStyle]="{'border':'solid 1px','text-align':'left'}">H4</th>
