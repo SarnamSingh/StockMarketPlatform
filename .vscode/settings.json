@@ -1,0 +1,7 @@
+{
+    "editor.formatOnType": true,
+    "workbench.preferredLightColorTheme": "Visual Studio Light",
+    "workbench.preferredHighContrastColorTheme": "Default Light+",
+    "workbench.colorTheme": "Default Light+",
+    "workbench.preferredDarkColorTheme": "Default Light+"
+}

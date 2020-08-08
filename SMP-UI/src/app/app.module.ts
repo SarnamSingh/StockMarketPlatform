@@ -10,9 +10,9 @@ import { AppComponent } from './app.component';
 import {HomeComponent} from './home/home.component';
 import { BhavcopyComponent } from './bhavcopy/bhavopy.component';
 import { BhavcopyService } from './bhavcopy/bhavcopy.service';
-import { from } from 'rxjs';
 import { MatNativeDateModule } from '@angular/material/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'; 
+import { StockHistoricalDataModule } from './StockHistoricalData/stockHistoricalData.module';
 
 
 
@@ -31,7 +31,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     MatInputModule,
     MatNativeDateModule,
     MatDatepickerModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    StockHistoricalDataModule
   ],
   providers: [BhavcopyService],
   bootstrap: [AppComponent]

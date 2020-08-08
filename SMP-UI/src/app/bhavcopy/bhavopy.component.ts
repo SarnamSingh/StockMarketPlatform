@@ -22,7 +22,7 @@ export class BhavcopyComponent {
 
     constructor(private bhavcopyService: BhavcopyService) {
         this.bhavcopyTypes = [{ value: 0, displayText: ' --- Select --- ' }, { value: 1, displayText: 'Equity' }, { value: 2, displayText: 'FNO' }];
-        this.selectedBhavcopy = { value: 0, displayText: ' --- Select --- ' }
+        this.selectedBhavcopy = this.bhavcopyTypes[0];
     }
 
     // control events
@@ -52,8 +52,7 @@ export class BhavcopyComponent {
 
     }
     OnBhavcopyUploadClick() {
-
-        if (this.selectedBhavcopy.value == 1 && this.equityBhavcopyArray.length > 0) {
+if (this.selectedBhavcopy.value == 1 && this.equityBhavcopyArray.length > 0) {
            
             let counter = 0;
             this.progressBar.nativeElement.style.display ="inline-block";
