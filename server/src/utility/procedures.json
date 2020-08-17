@@ -266,5 +266,12 @@
             "type": "decimal",
             "modelProperty":"toFloorPointWidth"
         }
+    ],
+    "EquityFNO_Select_OneDayVolumeOI":[
+        {
+            "propColumn":"TradedOn",
+            "type":"string",
+            "modelProperty":"tradedOn"
+        }
     ]
 }

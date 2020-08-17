@@ -8,7 +8,8 @@ const routes: Routes = [
 
   { path: '', redirectTo: '/Home', pathMatch: 'full' },
   { path: 'Home', component: HomeComponent },
-  { path: 'bhavcopy', component: BhavcopyComponent },
+  { path: 'Bhavcopy', component: BhavcopyComponent },
+  { path: 'StockHistoricalData', loadChildren:()=>import('./StockHistoricalData/stockHistoricalData.module').then(m=>m.StockHistoricalDataModule)},
   { path: '**', component: HomeComponent }
 ];
 

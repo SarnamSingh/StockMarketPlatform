@@ -26,7 +26,7 @@ exports. getResponse = (err, data)=>{
             responseDetail.data = data;
             delete responseDetail.errorStack;
             delete responseDetail.errorMessage;
-            
+             
         }
         return responseDetail;
 }
